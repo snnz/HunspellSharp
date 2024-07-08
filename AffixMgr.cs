@@ -4924,17 +4924,17 @@ namespace HunspellSharp
         case "iso88598": cp = 28598; break;
         case "iso88599": cp = 28599; break;
         case "iso885910": cp = 28600; break;
-        case "tis620": cp = 28601; break;
-        case "tis6202533": cp = 28601; break;
-        case "iso885911": cp = 28601; break;
+        case "tis620":
+        case "tis6202533":
+        case "iso885911": cp = 874; break;
         case "iso885913": cp = 28603; break;
         case "iso885914": cp = 28604; break;
         case "iso885915": cp = 28605; break;
         case "koi8r": cp = 20866; break;
         case "koi8u": cp = 21866; break;
-        case "cp1251": cp = 1251; break;
+        case "cp1251":
         case "microsoftcp1251": cp = 1251; break;
-        case "xisciias": cp = 57006; break;
+        case "xisciias":
         case "isciidevanagari": cp = 57006; break;
         default: cp = 0; break;
       }
@@ -4948,7 +4948,12 @@ namespace HunspellSharp
         }
         catch
         {
-          HUNSPELL_WARNING(true, Properties.Resources.UnknownEncodingError, id, af);
+          switch (cp)
+          {
+            case 28600: encoding = Encodings.Iso8859_10.Instance; break;
+            case 28604: encoding = Encodings.Iso8859_14.Instance; break;
+            default: HUNSPELL_WARNING(true, Properties.Resources.UnknownEncodingError, id, af); break;
+          }
         }
       else
         HUNSPELL_WARNING(false, Properties.Resources.UnknownEncodingWarning, id, af);
