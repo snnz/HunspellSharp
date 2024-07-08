@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;netstandard2.0;net40</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Authors>Sergey Nozhenko</Authors>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>HunspellSharp.snk</AssemblyOriginatorKeyFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>HunspellSharp</Title>
+    <Description>C# port of Hunspell library</Description>
+    <Product>$(AssemblyName)</Product>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <AssemblyTitle>$(AssemblyName)/$(TargetFramework)</AssemblyTitle>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright (C) 2024 Sergey Nozhenko</Copyright>
+    <PackageTags>hunspell;spell;spelling;spellcheck;stemming</PackageTags>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/snnz/HunspellSharp/</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/snnz/HunspellSharp.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>none</DebugType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SauceControl.InheritDoc" Version="2.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="License.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
