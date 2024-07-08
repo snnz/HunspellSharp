@@ -213,7 +213,7 @@ Hunspell.SetWarningHandler(new CustomWarningHandler());
 ```
 
 
-## Techinical notes
+## Technical notes
 
 HunspellSharp relies on `System.Globalization` features when converting characters to lower- or uppercase.
 If language is specified in the affix file, appropriate `CultureInfo` is used. 
