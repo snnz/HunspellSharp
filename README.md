@@ -14,7 +14,7 @@ This is a C# port of [Hunspell library](https://github.com/hunspell/hunspell).
 
 ### Preliminary
 
-If your application is targeting .NET or .NET Standard and intended to work with dictionaries encoded not as ISO-8859-1 or UTF-8,
+If your application targets .NET or .NET Standard and intended to work with dictionaries encoded as anything other than ISO-8859-1 or UTF-8,
 install [System.Text.Encoding.CodePages package](https://www.nuget.org/packages/System.Text.Encoding.CodePages/) and make additional encodings available by calling
 `Encoding.RegisterProvider(CodePagesEncodingProvider.Instance)` before loading Hunspell files.
 
@@ -26,13 +26,13 @@ With file paths:
 var hunspell = new Hunspell("en.aff", "en.dic");
 ```
 
-Like original Hunspell, it tries to open hzipped files (.hz) in case the plain files are not found. Optional hzip key can be added:
+Like the original Hunspell, it attempts to open hzipped files (.hz) if plain files are not found. An optional hzip key can be added:
 
 ```csharp
 var hunspell = new Hunspell("en.aff", "en.dic", key);
 ```
 
-The `key` argument is a byte array. Use `Encoding.GetBytes` of the appropriate encoding to get byte array from a string.
+The `key` argument is a byte array. Use `Encoding.GetBytes` of the appropriate encoding to get a byte array from the string.
 
 With streams:
 
@@ -40,11 +40,11 @@ With streams:
 var hunspell = new Hunspell(affStream, dicStream);
 ```
 
-In case the stream is packed with `hzip`, wrap it in `HzipStream`. The `HzipStream` contructor also accepts optional hzip key.
+In case the stream is compressed with `hzip`, wrap it in `HzipStream`. `HzipStream` contructor also accepts an optional hzip key.
 
 ### Disposing
 
-A `Hunspell` instance uses some disposable resources and thus is disposable itself, so do not forget to add a `using` statement or explicitly call `hunspell.Dispose()` when it is no longer needed.
+A `Hunspell` instance uses some disposable resources and is thus itself disposable, so be sure to add a `using` statement or explicitly call `hunspell.Dispose()` when it is no longer needed.
 
 
 ### Spelling
@@ -53,7 +53,7 @@ A `Hunspell` instance uses some disposable resources and thus is disposable itse
 bool result = hunspell.Spell("sample");
 ```
 
-There are also methods that provide additional info and the root word:
+There are also methods that provide additional information and the root word:
 
 ```csharp
 result = hunspell.Spell("sample", out var info);
@@ -71,7 +71,7 @@ List<string> suggestions = hunspell.Suggest("sapmle");
 
 Simplified XML API input is supported. See the [Hunspell manual](https://github.com/hunspell/hunspell/blob/master/man/hunspell.3) for a description.
 
-Suggest words by applying suffix rules to the root word:
+Suggest words by applying the suffix rules to the root word:
 
 ```csharp
 List<string> suggestions = hunspell.SuffixSuggest("sample");
@@ -103,7 +103,7 @@ Get stem(s):
 List<string> stems = hunspell.Stem("samples");
 ```
 
-Using previous result of the morphological analysis:
+Using the previous result of morphological analysis:
 
 ```csharp
 List<string> stems = hunspell.Stem("samples", description);
@@ -112,9 +112,9 @@ List<string> stems = hunspell.Stem("samples", description);
 ### Dictionary manipulation
 
 > [!NOTE]
-> These methods are not thread-safe and have to be run exclusively.
+> These methods are not thread-safe and must be run exclusively.
 
-Append extra dictionary, from a file path or a stream:
+Append additional dictionary from a file path or a stream:
 
 ```csharp
 hunspell.AddDic("some.dic");
@@ -146,7 +146,7 @@ With affixes using an example word:
 hunspell.AddWithAffix("word", "example");
 ```
 
-Remove word from the run-time dictionary:
+Remove a word from the run-time dictionary:
 
 ```csharp
 hunspell.Remove("word");
@@ -160,7 +160,7 @@ Dictionary encoding:
 Encoding encoding = hunspell.DicEncoding;
 ```
 
-Dictionary language number; enum values match the numbers in the original Hunspell:
+Dictionary language number; the enum values correspond to the numbers in the original Hunspell:
 
 ```csharp
 LANG langnum = hunspell.LangNum;
@@ -172,7 +172,7 @@ Affix and dictionary file version:
 string version = hunspell.Version;
 ```
 
-Extra word characters defined in the affix file:
+Additional word characters defined in the affix file:
 
 ```csharp
 char[] wordchars = hunspell.Wordchars;
@@ -187,7 +187,7 @@ string output = hunspell.InputConv("input");
 
 ### Error handling
 
-HunspellSharp throws exceptions of the type `HunspellException` on severe affix/dictionary format errors. In case you need the behavior of the original Hunspell, which always just issues warnings but continues execution, set static property `StrictFormat` to `false`:
+HunspellSharp throws exceptions of the type `HunspellException` on severe affix/dictionary format errors. In you want the behavior of the original Hunspell, which always just issues warnings but continues execution, set the static `StrictFormat` property to `false`:
 
 ```csharp
 Hunspell.StrictFormat = false;
@@ -195,7 +195,7 @@ Hunspell.StrictFormat = false;
 
 ### Warning handling
 
-By default, HunspellSharp sends warning messages to `System.Diagnostics.Debug`. To change this, create a class implementing `IHunspellWarningHandler` interface and pass the reference to an instance of it to the static method `SetWarningHandler`:
+By default, HunspellSharp sends warning messages to `System.Diagnostics.Debug`. To change this, create a class implementing the `IHunspellWarningHandler` interface and pass the reference to its instance to the static `SetWarningHandler` method:
 
 ```csharp
 class CustomWarningHandler : IHunspellWarningHandler
@@ -216,14 +216,21 @@ Hunspell.SetWarningHandler(new CustomWarningHandler());
 ## Technical notes
 
 HunspellSharp relies on `System.Globalization` features when converting characters to lower- or uppercase.
-If language is specified in the affix file, appropriate `CultureInfo` is used. 
-If not, the culture is either guessed from the encoding, or defaults to the invariant culture.
-In the latter case, some results may differ from the original Hunspell that uses embedded case conversion tables.
+If a language is specified in the affix file, the corresponding `CultureInfo` is used. 
+If not, the culture is either guessed from the encoding, or the invariant culture is used by default.
+In the latter case, some results may differ from the original Hunspell that uses built-in case conversion tables.
 For example, the invariant culture does not convert capital 'İ' to lowercase 'i', so Turkish words containing 'İ'
-will not be recognized as forms of lowercase dictionary words if no language is specified in the affix file and
-dictionary encoding is not ISO-8859-9. To avoid this, specify correct dictionary language explicitly.
+will not be recognized as forms of lowercase dictionary words if the language is not specified in the affix file and
+the dictionary encoding is not ISO-8859-9. To avoid this, explicitly specify the correct dictionary language.
 
-N-gram suggestions may sometimes differ from the original ones, because their choice depends on the order of words in the internal hash tables,
-sorting algorithm and other factors, which are not the same as in the original Hunspell.
+HunspellSharp parses affix files in one pass, so options that affect further parsing (SET, FLAGS) must precede options that depend on them.
+This differs from the original Hunspell, which makes two passes, picking up some options in the first pass, and then parsing the rest in the second.
 
-This port is rather straightforward. Non-public source code does not follow usual C# conventions deliberately, in attempt to keep resemblance to the original C++ code wherever possible.
+When a dictionary is added with the `AddDic` method, HunspellSharp merges its entries with existing ones, and then makes lookups in a signle runtime dictionary,
+whereas the original Hunspell stores additional dictionaries as separate structures, quiering them sequentially.
+
+N-gram suggestions may sometimes differ from the original ones, since their choice depends on the order of words in internal hash tables,
+the sorting algorithm and other factors that do not match those in the original Hunspell.
+
+This port is rather straightforward. The non-public source code intentionally does not follow normal C# conventions,
+in order to maintain similarity to the C++ source code where possible, making it easier to compare this port to the original.
