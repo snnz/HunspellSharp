@@ -226,7 +226,7 @@ the dictionary encoding is not ISO-8859-9. To avoid this, explicitly specify the
 HunspellSharp parses affix files in one pass, so options that affect further parsing (SET, FLAGS) must precede options that depend on them.
 This differs from the original Hunspell, which makes two passes, picking up some options in the first pass, and then parsing the rest in the second.
 
-When a dictionary is added with the `AddDic` method, HunspellSharp merges its entries with existing ones, and then makes lookups in a signle runtime dictionary,
+When a dictionary is added with the `AddDic` method, HunspellSharp merges its entries with existing ones, and then makes lookups in a single runtime dictionary,
 whereas the original Hunspell stores additional dictionaries as separate structures, quiering them sequentially.
 
 N-gram suggestions may sometimes differ from the original ones, since their choice depends on the order of words in internal hash tables,
