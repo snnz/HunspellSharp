@@ -200,6 +200,28 @@ namespace HunspellSharp
       return list;
     }
 
+    public static void SortRemoveDuplicates(ref ushort[] a)
+    {
+      int n = a.Length;
+      if (n > 1)
+      {
+        Array.Sort(a);
+        var prev = a[0];
+        int j;
+        for (int i = j = 1; i < n; ++i)
+        {
+          var v = a[i];
+          if (v != prev)
+          {
+            if (j < i) a[j] = v;
+            ++j;
+            prev = v;
+          }
+        }
+        if (j < n) Array.Resize(ref a, j);
+      }
+    }
+
     public static bool TESTAFF(ushort[] a, ushort b)
     {
       if (a == null) return false;

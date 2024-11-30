@@ -840,7 +840,7 @@ namespace HunspellSharp
       int n = word.Length;
       // ofz#59067 a replist entry can generate a very long word, abandon
       // ngram if that odd-edge case arises
-      if (n > Hunspell.MAXWORDLEN * 4)
+      if (n > MAXWORDLEN * 4)
         return;
 
       // word reversing wrapper for complex prefixes
@@ -880,9 +880,9 @@ namespace HunspellSharp
               (hp.astr != null &&
                 (TESTAFF(hp.astr, forbiddenword) ||
                 TESTAFF(hp.astr, ONLYUPCASEFLAG) ||
-                TESTAFF(hp.astr, nosuggest) ||
-                TESTAFF(hp.astr, nongramsuggest) ||
-                TESTAFF(hp.astr, onlyincompound)))
+                nosuggest != 0 && TESTAFF(hp.astr, nosuggest) ||
+                nongramsuggest != 0 && TESTAFF(hp.astr, nongramsuggest) ||
+                onlyincompound != 0 && TESTAFF(hp.astr, onlyincompound)))
             )
           continue;
 
@@ -1163,7 +1163,7 @@ namespace HunspellSharp
           if (rv != null &&
               ((rv2 = lookup(word)) == null || rv2.astr == null ||
                 !(TESTAFF(rv2.astr, forbiddenword) ||
-                  TESTAFF(rv2.astr, nosuggest))))
+                  nosuggest != 0 && TESTAFF(rv2.astr, nosuggest))))
             return 3;  // XXX obsolote categorisation + only ICONV needs affix
                        // flag check?
         }
@@ -1176,15 +1176,15 @@ namespace HunspellSharp
       {
         if (rv.astr != null &&
             (TESTAFF(rv.astr, forbiddenword) ||
-             TESTAFF(rv.astr, nosuggest) ||
-             TESTAFF(rv.astr, substandard)))
+             nosuggest != 0 && TESTAFF(rv.astr, nosuggest) ||
+             substandard != 0 && TESTAFF(rv.astr, substandard)))
           return 0;
         while (rv != null)
         {
           if (rv.astr != null &&
-              (TESTAFF(rv.astr, needaffix) ||
+              (needaffix != 0 && TESTAFF(rv.astr, needaffix) ||
                TESTAFF(rv.astr, ONLYUPCASEFLAG) ||
-               TESTAFF(rv.astr, onlyincompound)))
+               onlyincompound != 0 && TESTAFF(rv.astr, onlyincompound)))
           {
             rv = rv.next_homonym;
           }
@@ -1215,8 +1215,8 @@ namespace HunspellSharp
       if (rv != null && rv.astr != null &&
           (TESTAFF(rv.astr, forbiddenword) ||
            TESTAFF(rv.astr, ONLYUPCASEFLAG) ||
-           TESTAFF(rv.astr, nosuggest) ||
-           TESTAFF(rv.astr, onlyincompound)))
+           nosuggest != 0 && TESTAFF(rv.astr, nosuggest) ||
+           onlyincompound != 0 && TESTAFF(rv.astr, onlyincompound)))
         return 0;
 
       if (rv != null)
@@ -1233,8 +1233,8 @@ namespace HunspellSharp
     {
       hentry rv = lookup(word);
       if (rv != null && rv.astr != null &&
-          (TESTAFF(rv.astr, needaffix) ||
-           TESTAFF(rv.astr, onlyincompound)))
+          (needaffix != 0 && TESTAFF(rv.astr, needaffix) ||
+           onlyincompound != 0 && TESTAFF(rv.astr, onlyincompound)))
         rv = null;
       int len = word.Length;
       if (prefix_check(word, 0, len, IN_CPD.BEGIN) == null)
@@ -1265,8 +1265,8 @@ namespace HunspellSharp
       {
         if (rv.astr == null ||
             !(TESTAFF(rv.astr, forbiddenword) ||
-              TESTAFF(rv.astr, needaffix) ||
-              TESTAFF(rv.astr, onlyincompound)))
+              needaffix != 0 && TESTAFF(rv.astr, needaffix) ||
+              onlyincompound != 0 && TESTAFF(rv.astr, onlyincompound)))
         {
           if (!rv.Contains(MORPH.STEM))
           {

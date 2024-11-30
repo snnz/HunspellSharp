@@ -264,16 +264,19 @@ namespace HunspellSharp
            ((captype == CapType.ALLCAP) && (flagslen != 0))) &&
           !((flagslen != 0) && TESTAFF(flags, forbiddenword)))
       {
-        ushort[] flags2 = new ushort[flagslen + 1];
-        flags2[flagslen] = ONLYUPCASEFLAG;
-        if (flagslen != 0)
+        int i = flagslen > 0 ? Array.BinarySearch(flags, (ushort)ONLYUPCASEFLAG) : ~0;
+        if (i < 0)
         {
-          Array.Copy(flags, 0, flags2, 0, flagslen);
-          Array.Sort(flags2);
+          i = ~i;
+          var flags2 = new ushort[flagslen + 1];
+          if (i > 0) Array.Copy(flags, 0, flags2, 0, i);
+          flags2[i] = ONLYUPCASEFLAG;
+          if (i < flagslen) Array.Copy(flags, i, flags2, i + 1, flagslen - i);
+          flags = flags2;
         }
 
         var new_word = helper.mkinitcap(textinfo.ToLower(word), textinfo);
-        return add_word(new_word, flags2, dp, true, CapType.INITCAP, file);
+        return add_word(new_word, flags, dp, true, CapType.INITCAP, file);
       }
       return true;
     }
@@ -487,7 +490,7 @@ namespace HunspellSharp
           else
           {
             flags = decode_flags(ap, dic);
-            Array.Sort(flags);
+            SortRemoveDuplicates(ref flags);
           }
         }
         else

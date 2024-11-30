@@ -321,11 +321,11 @@ namespace HunspellSharp
               if (parts.MoveNext())
               {
                 keyword = parts.Current;
-                if (keyword.Equals("long"))
+                if (keyword.Contains("long"))
                   flag_mode = FlagMode.LONG;
-                else if (keyword.Equals("num"))
+                if (keyword.Contains("num"))
                   flag_mode = FlagMode.NUM;
-                else if (keyword.Equals("UTF-8"))
+                if (keyword.Contains("UTF-8"))
                   flag_mode = FlagMode.UNI;
               }
 
@@ -894,11 +894,11 @@ namespace HunspellSharp
             // fogemorpheme
             ((in_compound != IN_CPD.NOT) ||
              !(pe.getCont() != null &&
-               TESTAFF(pe.getCont(), onlyincompound))) &&
+               onlyincompound != 0 && TESTAFF(pe.getCont(), onlyincompound))) &&
             // permit prefixes in compounds
             ((in_compound != IN_CPD.END) ||
              (pe.getCont() != null &&
-              TESTAFF(pe.getCont(), compoundpermitflag))))
+              compoundpermitflag != 0 && TESTAFF(pe.getCont(), compoundpermitflag))))
         {
           // check prefix
           rv = pe.checkword(this, word, start, len, in_compound, needflag);
@@ -921,10 +921,10 @@ namespace HunspellSharp
                 // fogemorpheme
                 ((in_compound != IN_CPD.NOT) ||
                  !(pptr.getCont() != null &&
-                   TESTAFF(pptr.getCont(), onlyincompound))) &&
+                   onlyincompound != 0 && TESTAFF(pptr.getCont(), onlyincompound))) &&
                 // permit prefixes in compounds
                 ((in_compound != IN_CPD.END) ||
-                 (pptr.getCont() != null && TESTAFF(pptr.getCont(), compoundpermitflag))))
+                 (pptr.getCont() != null && compoundpermitflag != 0 && TESTAFF(pptr.getCont(), compoundpermitflag))))
             {
               // check prefix
               rv = pptr.checkword(this, word, start, len, in_compound, needflag);
@@ -1018,7 +1018,7 @@ namespace HunspellSharp
           if (isSubset(pptr.getKey(), word, start))
           {
             if (in_compound != IN_CPD.NOT ||
-                !(pptr.getCont() != null && TESTAFF(pptr.getCont(), onlyincompound)))
+                !(pptr.getCont() != null && onlyincompound != 0 && TESTAFF(pptr.getCont(), onlyincompound)))
             {
               var prelen = result.Length;
               pptr.check_morph(this, result, word, start, len, in_compound, needflag);
@@ -1587,7 +1587,7 @@ namespace HunspellSharp
                 // else check forbiddenwords and needaffix
               }
               else if (rv.astr != null && (TESTAFF(rv.astr, forbiddenword) ||
-                                      TESTAFF(rv.astr, needaffix) ||
+                                      needaffix != 0 && TESTAFF(rv.astr, needaffix) ||
                                       TESTAFF(rv.astr, ONLYUPCASEFLAG) ||
                                       (is_sug && nosuggest != 0 &&
                                        TESTAFF(rv.astr, nosuggest))))
@@ -1600,9 +1600,9 @@ namespace HunspellSharp
               // check non_compound flag in suffix and prefix
               if (rv != null && !hu_mov_rule &&
                   ((ctx.pfx != null && ctx.pfx.getCont() != null &&
-                    TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
+                    compoundforbidflag != 0 && TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
                    (ctx.sfx != null && ctx.sfx.getCont() != null &&
-                    TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
+                    compoundforbidflag != 0 && TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
               {
                 rv = null;
               }
@@ -1837,9 +1837,9 @@ namespace HunspellSharp
 
                   // check non_compound flag in suffix and prefix
                   if (rv != null && ((ctx.pfx != null && ctx.pfx.getCont() != null &&
-                                TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
+                                compoundforbidflag != 0 && TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
                                (ctx.sfx != null && ctx.sfx.getCont() != null &&
-                                TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
+                                compoundforbidflag != 0 && TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
                   {
                     rv = null;
                   }
@@ -2243,7 +2243,7 @@ namespace HunspellSharp
             }
             else if (rv.astr != null && (TESTAFF(rv.astr, forbiddenword) ||
                                     TESTAFF(rv.astr, ONLYUPCASEFLAG) ||
-                                    TESTAFF(rv.astr, needaffix)))
+                                    needaffix != 0 && TESTAFF(rv.astr, needaffix)))
             {
               continue;
             }
@@ -2251,9 +2251,9 @@ namespace HunspellSharp
             // check non_compound flag in suffix and prefix
             if (rv != null && !hu_mov_rule &&
                 ((ctx.pfx != null && ctx.pfx.getCont() != null &&
-                  TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
+                  compoundforbidflag != 0 && TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
                  (ctx.sfx != null && ctx.sfx.getCont() != null &&
-                  TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
+                  compoundforbidflag != 0 && TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
             {
               continue;
             }
@@ -2492,9 +2492,9 @@ namespace HunspellSharp
               // check non_compound flag in suffix and prefix
               if (rv != null &&
                   ((ctx.pfx != null && ctx.pfx.getCont() != null &&
-                    TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
+                    compoundforbidflag != 0 && TESTAFF(ctx.pfx.getCont(), compoundforbidflag)) ||
                    (ctx.sfx != null && ctx.sfx.getCont() != null &&
-                    TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
+                    compoundforbidflag != 0 && TESTAFF(ctx.sfx.getCont(), compoundforbidflag))))
               {
                 rv = null;
               }
@@ -2503,7 +2503,7 @@ namespace HunspellSharp
               if (rv != null && rv.astr != null &&
                   (TESTAFF(rv.astr, forbiddenword) ||
                    TESTAFF(rv.astr, ONLYUPCASEFLAG)) &&
-                  (!TESTAFF(rv.astr, needaffix)))
+                  (!(needaffix != 0 && TESTAFF(rv.astr, needaffix))))
               {
                 continue;
               }
@@ -2692,14 +2692,14 @@ namespace HunspellSharp
               // fogemorpheme
               (in_compound != IN_CPD.NOT ||
                !(se.getCont() != null &&
-                 (TESTAFF(se.getCont(), onlyincompound)))) &&
+                 (onlyincompound != 0 && TESTAFF(se.getCont(), onlyincompound)))) &&
               // needaffix on prefix or first suffix
               (cclass != 0 ||
                !(se.getCont() != null &&
-                 TESTAFF(se.getCont(), needaffix)) ||
+                 needaffix != 0 && TESTAFF(se.getCont(), needaffix)) ||
                (ppfx != null &&
                 !(ep.getCont() != null &&
-                  TESTAFF(ep.getCont(), needaffix)))))
+                  needaffix != 0 && TESTAFF(ep.getCont(), needaffix)))))
           {
             rv = se.checkword(this, word, start, len, sfxopts, ppfx,
                                cclass, needflag,
@@ -2741,17 +2741,17 @@ namespace HunspellSharp
                    (TESTAFF(sptr.getCont(), circumfix))))) &&
                 // fogemorpheme
                 (in_compound != IN_CPD.NOT ||
-                 !(sptr.getCont() != null && TESTAFF(sptr.getCont(), onlyincompound))) &&
+                 !(sptr.getCont() != null && onlyincompound != 0 && TESTAFF(sptr.getCont(), onlyincompound))) &&
                 // needaffix on prefix or first suffix
                 (cclass != 0 ||
                  !(sptr.getCont() != null &&
-                   TESTAFF(sptr.getCont(), needaffix)) ||
+                   needaffix != 0 && TESTAFF(sptr.getCont(), needaffix)) ||
                  (ppfx != null &&
                   !(ep.getCont() != null &&
-                    TESTAFF(ep.getCont(), needaffix)))))
+                    needaffix != 0 && TESTAFF(ep.getCont(), needaffix)))))
               if (in_compound != IN_CPD.END || ppfx != null ||
                   !(sptr.getCont() != null &&
-                    TESTAFF(sptr.getCont(), onlyincompound)))
+                    onlyincompound != 0 && TESTAFF(sptr.getCont(), onlyincompound)))
               {
                 rv = sptr.checkword(this, word, start, len, sfxopts, ppfx,
                                      cclass, needflag,
@@ -2964,14 +2964,14 @@ namespace HunspellSharp
                // fogemorpheme
                (in_compound != IN_CPD.NOT ||
                 !((se.getCont() != null &&
-                   (TESTAFF(se.getCont(), onlyincompound))))) &&
+                   (onlyincompound != 0 && TESTAFF(se.getCont(), onlyincompound))))) &&
                // needaffix on prefix or first suffix
                (cclass != 0 ||
                 !(se.getCont() != null &&
-                  TESTAFF(se.getCont(), needaffix)) ||
+                  needaffix != 0 && TESTAFF(se.getCont(), needaffix)) ||
                 (ppfx != null &&
                  !(ep.getCont() != null &&
-                   TESTAFF(ep.getCont(), needaffix))))))
+                   needaffix != 0 && TESTAFF(ep.getCont(), needaffix))))))
             rv = se.checkword(this, word, start, len, sfxopts, ppfx, cclass,
                                needflag, 0);
           while (rv != null)
@@ -3045,11 +3045,11 @@ namespace HunspellSharp
                     (TESTAFF(sptr.getCont(), circumfix))))) &&
                  // fogemorpheme
                  (in_compound != IN_CPD.NOT ||
-                  !((sptr.getCont() != null && (TESTAFF(sptr.getCont(), onlyincompound))))) &&
+                  !((sptr.getCont() != null && (onlyincompound != 0 && TESTAFF(sptr.getCont(), onlyincompound))))) &&
                  // needaffix on first suffix
                  (cclass != 0 ||
                   !(sptr.getCont() != null &&
-                    TESTAFF(sptr.getCont(), needaffix)))))
+                    needaffix != 0 && TESTAFF(sptr.getCont(), needaffix)))))
               rv = sptr.checkword(this, word, start, len, sfxopts, ppfx, cclass,
                                    needflag, 0);
             while (rv != null)
@@ -3257,7 +3257,7 @@ namespace HunspellSharp
         return string.Empty;
 
       // check substandard flag
-      if (TESTAFF(ap, substandard))
+      if (substandard != 0 && TESTAFF(ap, substandard))
         return string.Empty;
 
       if (morphcmp(morph, targetmorph) == 0)
@@ -3283,7 +3283,7 @@ namespace HunspellSharp
             if (sptr.getFlag() == ap[i] && sptr.getMorph() != null &&
                 ((sptr.getCont() == null) ||
                  // don't generate forms with substandard affixes
-                 !TESTAFF(sptr.getCont(), substandard))) {
+                 !(substandard != 0 && TESTAFF(sptr.getCont(), substandard)))) {
               string stemmorph;
               if (stemmorphcatpos != -1) {
                 if (stemmorphcatpos < mymorph.Length) mymorph = mymorph.Remove(stemmorphcatpos);
@@ -3309,7 +3309,7 @@ namespace HunspellSharp
 
               // recursive call for secondary suffixes
               if ((level == 0) && (cmp == 1) && (sptr.getCont() != null) &&
-                  !TESTAFF(sptr.getCont(), substandard)) {
+                  !(substandard != 0 && TESTAFF(sptr.getCont(), substandard))) {
                 string newword = sptr.add(this, ts);
                 if (newword != null) {
                   string newword2 =
@@ -4303,7 +4303,7 @@ namespace HunspellSharp
             return false;
           }
 
-          Array.Sort(alias);
+          SortRemoveDuplicates(ref alias);
           aliasf.Add(alias);
         }
       }
@@ -4674,7 +4674,7 @@ namespace HunspellSharp
                     else
                     {
                       entry.contclass = decode_flags(dash_str, af);
-                      if (entry.contclass != null) Array.Sort(entry.contclass);
+                      if (entry.contclass != null) SortRemoveDuplicates(ref entry.contclass);
                     }
 
                     if (entry.contclass != null)

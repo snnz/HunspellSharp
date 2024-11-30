@@ -34,6 +34,19 @@ namespace HunspellSharp
       return true;
     }
 
+    public bool Contains(string value)
+    {
+      int last = Offset + Length - value.Length;
+      for (int i = Offset; i <= last && (i = Array.IndexOf(Data, (byte)value[0], i, Length - (i - Offset))) >= 0; ++i)
+      {
+        for (int j = 1; j < value.Length; ++j)
+          if (Data[i + j] != value[j]) goto next;
+        return true;
+      next:;
+      }
+      return false;
+    }
+
     public int IndexOf(char c)
     {
       var i = Array.IndexOf(Data, (byte)c, Offset, Length);
