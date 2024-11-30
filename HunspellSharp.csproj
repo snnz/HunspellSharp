@@ -20,7 +20,7 @@
     <PackageProjectUrl>https://github.com/snnz/HunspellSharp/</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/snnz/HunspellSharp.git</RepositoryUrl>
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.0.2</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
