@@ -1565,7 +1565,7 @@ namespace HunspellSharp
         ctx.lcsC = new int[c_.Length];
       }
 
-      for (int j = 0; j <= n; ++j) c_[j] = 0;
+      for (int j = 0; j < n; ++j) c_[j] = 0;
       for (int i = 0; i < m; ++i)
       {
         var c = (i & 1) == 0 ? ctx.lcsC : ctx.lcsB;
