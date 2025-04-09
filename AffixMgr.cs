@@ -911,37 +911,39 @@ namespace HunspellSharp
       }
 
       // now handle the general case
-      char sp = word.At(start);
-      if (pStart.TryGetValue(sp, out var pptr))
-        do
-        {
-          if (isSubset(pptr.getKey(), word, start))
+      if (word.Length() > 0)
+      {
+        char sp = word.At(start);
+        if (pStart.TryGetValue(sp, out var pptr))
+          do
           {
-            if (
-                // fogemorpheme
-                ((in_compound != IN_CPD.NOT) ||
-                 !(pptr.getCont() != null &&
-                   onlyincompound != 0 && TESTAFF(pptr.getCont(), onlyincompound))) &&
-                // permit prefixes in compounds
-                ((in_compound != IN_CPD.END) ||
-                 (pptr.getCont() != null && compoundpermitflag != 0 && TESTAFF(pptr.getCont(), compoundpermitflag))))
+            if (isSubset(pptr.getKey(), word, start))
             {
-              // check prefix
-              rv = pptr.checkword(this, word, start, len, in_compound, needflag);
-              if (rv != null)
+              if (
+                  // fogemorpheme
+                  ((in_compound != IN_CPD.NOT) ||
+                   !(pptr.getCont() != null &&
+                     onlyincompound != 0 && TESTAFF(pptr.getCont(), onlyincompound))) &&
+                  // permit prefixes in compounds
+                  ((in_compound != IN_CPD.END) ||
+                   (pptr.getCont() != null && compoundpermitflag != 0 && TESTAFF(pptr.getCont(), compoundpermitflag))))
               {
-                ctx.pfx = pptr;  // BUG: pfx not stateless
-                return rv;
+                // check prefix
+                rv = pptr.checkword(this, word, start, len, in_compound, needflag);
+                if (rv != null)
+                {
+                  ctx.pfx = pptr;  // BUG: pfx not stateless
+                  return rv;
+                }
               }
+              pptr = pptr.getNextEQ();
             }
-            pptr = pptr.getNextEQ();
-          }
-          else
-          {
-            pptr = pptr.getNextNE();
-          }
-        } while (pptr != null);
-
+            else
+            {
+              pptr = pptr.getNextNE();
+            }
+          } while (pptr != null);
+      }
       return null;
     }
 
@@ -968,26 +970,28 @@ namespace HunspellSharp
       }
 
       // now handle the general case
-      char sp = word.At(start);
-      if (pStart.TryGetValue(sp, out var pptr))
-        do
-        {
-          if (isSubset(pptr.getKey(), word, start))
+      if (word.Length() > 0)
+      {
+        char sp = word.At(start);
+        if (pStart.TryGetValue(sp, out var pptr))
+          do
           {
-            rv = pptr.check_twosfx(this, word, start, len, in_compound, needflag);
-            if (rv != null)
+            if (isSubset(pptr.getKey(), word, start))
             {
-              ctx.pfx = pptr;
-              return rv;
+              rv = pptr.check_twosfx(this, word, start, len, in_compound, needflag);
+              if (rv != null)
+              {
+                ctx.pfx = pptr;
+                return rv;
+              }
+              pptr = pptr.getNextEQ();
             }
-            pptr = pptr.getNextEQ();
-          }
-          else
-          {
-            pptr = pptr.getNextNE();
-          }
-        } while (pptr != null);
-
+            else
+            {
+              pptr = pptr.getNextNE();
+            }
+          } while (pptr != null);
+      }
       return null;
     }
 
@@ -1011,30 +1015,33 @@ namespace HunspellSharp
       }
 
       // now handle the general case
-      char sp = word[start];
-      if (pStart.TryGetValue(sp, out var pptr))
-        do
-        {
-          if (isSubset(pptr.getKey(), word, start))
+      if (word.Length() > 0)
+      {
+        char sp = word[start];
+        if (pStart.TryGetValue(sp, out var pptr))
+          do
           {
-            if (in_compound != IN_CPD.NOT ||
-                !(pptr.getCont() != null && onlyincompound != 0 && TESTAFF(pptr.getCont(), onlyincompound)))
+            if (isSubset(pptr.getKey(), word, start))
             {
-              var prelen = result.Length;
-              pptr.check_morph(this, result, word, start, len, in_compound, needflag);
-              if (result.Length > prelen)
+              if (in_compound != IN_CPD.NOT ||
+                  !(pptr.getCont() != null && onlyincompound != 0 && TESTAFF(pptr.getCont(), onlyincompound)))
               {
-                // fogemorpheme
-                ctx.pfx = pptr;
+                var prelen = result.Length;
+                pptr.check_morph(this, result, word, start, len, in_compound, needflag);
+                if (result.Length > prelen)
+                {
+                  // fogemorpheme
+                  ctx.pfx = pptr;
+                }
               }
+              pptr = pptr.getNextEQ();
             }
-            pptr = pptr.getNextEQ();
-          }
-          else
-          {
-            pptr = pptr.getNextNE();
-          }
-        } while (pptr != null);
+            else
+            {
+              pptr = pptr.getNextNE();
+            }
+          } while (pptr != null);
+      }
     }
 
     // check word for prefixes and morph and two-level suffixes
@@ -1043,7 +1050,8 @@ namespace HunspellSharp
                                    int start,
                                    int len,
                                    IN_CPD in_compound,
-                                   ushort needflag = 0) {
+                                   ushort needflag = 0)
+    {
       var ctx = Context;
       ctx.pfx = null;
       ctx.sfxappnd = null;
@@ -1056,25 +1064,28 @@ namespace HunspellSharp
       }
 
       // now handle the general case
-      char sp = word[start];
-      if (pStart.TryGetValue(sp, out var pptr))
-        do
-        {
-          if (isSubset(pptr.getKey(), word, start))
+      if (word.Length() > 0)
+      {
+        char sp = word[start];
+        if (pStart.TryGetValue(sp, out var pptr))
+          do
           {
-            int prelen = result.Length;
-            pptr.check_twosfx_morph(this, result, word, start, len, in_compound, needflag);
-            if (result.Length > prelen)
+            if (isSubset(pptr.getKey(), word, start))
             {
-              ctx.pfx = pptr;
+              int prelen = result.Length;
+              pptr.check_twosfx_morph(this, result, word, start, len, in_compound, needflag);
+              if (result.Length > prelen)
+              {
+                ctx.pfx = pptr;
+              }
+              pptr = pptr.getNextEQ();
             }
-            pptr = pptr.getNextEQ();
-          }
-          else
-          {
-            pptr = pptr.getNextNE();
-          }
-        } while (pptr != null);
+            else
+            {
+              pptr = pptr.getNextNE();
+            }
+          } while (pptr != null);
+      }
     }
 
     // Is word a non-compound with a REP substitution (see checkcompoundrep)?
@@ -1340,7 +1351,7 @@ namespace HunspellSharp
       if (cpdmaxsyllable == 0)
         return 0;
 
-      if (len < 0) len = word.Length - i;
+      len = len < 0 ? word.Length : (len + i);
 
       int num = 0;
       for (; i < len; ++i)
@@ -1354,7 +1365,7 @@ namespace HunspellSharp
       if (cpdmaxsyllable == 0)
         return 0;
 
-      if (len < 0) len = word.Length - i;
+      len = len < 0 ? word.Length : (len + i);
 
       int num = 0;
       for (; i < len; ++i)
@@ -1874,11 +1885,7 @@ namespace HunspellSharp
                     // XXX only second suffix (inflections, not derivations)
                     if (ctx.sfxappnd != null)
                     {
-                      int n = ctx.sfxappnd.Length;
-                      var tmp = ctx.PeekBuffer(n);
-                      ctx.sfxappnd.CopyTo(0, tmp, 0, n);
-                      Array.Reverse(tmp, 0, n);
-                      numsyllable -= get_syllable(tmp, 0, n) + ctx.sfxextra;
+                      numsyllable -= get_syllable(ctx.sfxappnd) + ctx.sfxextra;
                     }
                     else
                     {
@@ -4550,9 +4557,9 @@ namespace HunspellSharp
       var affentries = new entries_container(at);
 
     // checking lines with bad syntax
-    #if DEBUG
+#if DEBUG
       int basefieldnum = 0;
-    #endif
+#endif
 
       // piece 2 - is affix char
       if (parts.MoveNext())

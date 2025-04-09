@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## 1.0.3 - 2025-04-09
+
+### Changed
+
+- Some optimization in search of suggestions.
+- A couple of minor errors have been fixed.
+
+
 ## 1.0.2 - 2024-12-01
 
 ### Changed

@@ -1547,70 +1547,33 @@ namespace HunspellSharp
       return num;
     }
 
-    const byte LCS_UP = 0, LCS_LEFT = 1, LCS_UPLEFT = 2;
-
     // longest common subsequence
-    byte[] lcs(Context ctx, string s, string s2)
+    int lcslen(Context ctx, string s1, string s2)
     {
-      int n, m, i, j;
-      m = s.Length + 1;
-      n = s2.Length + 1;
-      var c = ctx.lcsC;
-      var b = ctx.lcsB;
-      if (b == null || b.Length < m * n)
+      int m = s1.Length, n = s2.Length;
+      if (m < n)
       {
-        ctx.lcsB = b = new byte[Math.Max(m * n, 25 * 25)];
-        ctx.lcsC = c = new byte[b.Length];
+        var s = s1; s1 = s2; s2 = s;
+        m = n; n = s2.Length;
       }
-      for (i = 1; i < m; i++)
-        c[i * n] = 0;
-      for (j = 0; j < n; j++)
-        c[j] = 0;
-      for (i = 1; i < m; i++)
-      {
-        for (j = 1; j < n; j++)
-        {
-          if (s[i - 1] == s2[j - 1])
-          {
-            c[i * n + j] = (byte)(c[(i - 1) * n + j - 1] + 1);
-            b[i * n + j] = LCS_UPLEFT;
-          }
-          else if (c[(i - 1) * n + j] >= c[i * n + j - 1])
-          {
-            c[i * n + j] = c[(i - 1) * n + j];
-            b[i * n + j] = LCS_UP;
-          }
-          else
-          {
-            c[i * n + j] = c[i * n + j - 1];
-            b[i * n + j] = LCS_LEFT;
-          }
-        }
-      }
-      return b;
-    }
 
-    int lcslen(Context ctx, string s, string s2)
-    {
-      var result = lcs(ctx, s, s2);
-      int m = s.Length, n = s2.Length, len = 0;
-      int i = m, j = n++;
-      while ((i != 0) && (j != 0))
+      ++n;
+      var c_ = ctx.lcsB;
+      if (c_ == null || c_.Length < n)
       {
-        if (result[i * n + j] == LCS_UPLEFT)
-        {
-          len++;
-          i--;
-          j--;
-        }
-        else if (result[i * n + j] == LCS_UP)
-        {
-          i--;
-        }
-        else
-          j--;
+        ctx.lcsB = c_ = new int[Math.Max(n, 30)];
+        ctx.lcsC = new int[c_.Length];
       }
-      return len;
+
+      for (int j = 0; j <= n; ++j) c_[j] = 0;
+      for (int i = 0; i < m; ++i)
+      {
+        var c = (i & 1) == 0 ? ctx.lcsC : ctx.lcsB;
+        for (int j = 1; j < n; ++j)
+          c[j] = s1[i] == s2[j - 1] ? (c_[j - 1] + 1) : Math.Max(c[j - 1], c_[j]);
+        c_ = c;
+      }
+      return c_[n - 1];
     }
   }
 }

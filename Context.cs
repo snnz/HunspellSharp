@@ -11,7 +11,7 @@
     public readonly Timer compoundCheckTimer = new Timer();
     public readonly CountdownTimer suggestInnerTimer = new CountdownTimer();
 
-    public byte[] lcsB, lcsC;
+    public int[] lcsB, lcsC;
 
     public metachar_data[] btinfo;
 
